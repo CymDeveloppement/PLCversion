@@ -1,13 +1,16 @@
 <?php
+
+
+
   ini_set('display_errors', true);
   ini_set('html_errors', false);
   ini_set('display_startup_errors',true);     
-    ini_set('log_errors', false);
+  ini_set('log_errors', false);
   ini_set('error_prepend_string','<span style="color: red;">');
   ini_set('error_append_string','<br /></span>');
   ini_set('ignore_repeated_errors', false);
 require('func.admin.php');
-$user = getAdminUserInfo('ychallet');
+
 ?>
 
 <!DOCTYPE html>
@@ -26,6 +29,7 @@ $user = getAdminUserInfo('ychallet');
     <!-- Bootstrap core CSS -->
     <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/jquery.fileupload.css">
+    <link rel="stylesheet" href="../css/font-awesome/css/font-awesome.min.css">
     <!-- Custom styles for this template -->
     <link href="dashboard.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
@@ -38,8 +42,9 @@ $user = getAdminUserInfo('ychallet');
       <a class="navbar-brand" href="#">PLCversion</a>
       <div id="navbar">
         <nav class="nav navbar-nav float-xs-left">
-          <a class="nav-item nav-link" href="#">Programme</a>
-          <a class="nav-item nav-link" href="#">Ticket</a>
+          <a class="nav-item nav-link" href="#" onclick="dispProgramm();">Programme</a>
+          <a class="nav-item nav-link" href="#" onclick="dispTicket();">Ticket</a>
+          <a class="nav-item nav-link" href="#" onclick="dispUser();">Utilisateur</a>
         </nav>
         <form class="float-xs-right">
           <input type="text" class="form-control" placeholder="Search...">
@@ -57,139 +62,20 @@ $user = getAdminUserInfo('ychallet');
           </ul>
         </div>
         <div class="col-sm-9 offset-sm-3 col-md-10 offset-md-2 main">
-
+        <?php echo ini_get('upload_max_filesize'), ", " , ini_get('post_max_size'), ", ", ini_get('memory_limit'); ?>
           <div id="programm">
             <h2>Programmes</h2>
-            <div class="table-responsive">
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Header</th>
-                    <th>Header</th>
-                    <th>Header</th>
-                    <th>Header</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1,001</td>
-                    <td>Lorem</td>
-                    <td>ipsum</td>
-                    <td>dolor</td>
-                    <td>sit</td>
-                  </tr>
-                  <tr>
-                    <td>1,002</td>
-                    <td>amet</td>
-                    <td>consectetur</td>
-                    <td>adipiscing</td>
-                    <td>elit</td>
-                  </tr>
-                  <tr>
-                    <td>1,003</td>
-                    <td>Integer</td>
-                    <td>nec</td>
-                    <td>odio</td>
-                    <td>Praesent</td>
-                  </tr>
-                  <tr>
-                    <td>1,003</td>
-                    <td>libero</td>
-                    <td>Sed</td>
-                    <td>cursus</td>
-                    <td>ante</td>
-                  </tr>
-                  <tr>
-                    <td>1,004</td>
-                    <td>dapibus</td>
-                    <td>diam</td>
-                    <td>Sed</td>
-                    <td>nisi</td>
-                  </tr>
-                  <tr>
-                    <td>1,005</td>
-                    <td>Nulla</td>
-                    <td>quis</td>
-                    <td>sem</td>
-                    <td>at</td>
-                  </tr>
-                  <tr>
-                    <td>1,006</td>
-                    <td>nibh</td>
-                    <td>elementum</td>
-                    <td>imperdiet</td>
-                    <td>Duis</td>
-                  </tr>
-                  <tr>
-                    <td>1,007</td>
-                    <td>sagittis</td>
-                    <td>ipsum</td>
-                    <td>Praesent</td>
-                    <td>mauris</td>
-                  </tr>
-                  <tr>
-                    <td>1,008</td>
-                    <td>Fusce</td>
-                    <td>nec</td>
-                    <td>tellus</td>
-                    <td>sed</td>
-                  </tr>
-                  <tr>
-                    <td>1,009</td>
-                    <td>augue</td>
-                    <td>semper</td>
-                    <td>porta</td>
-                    <td>Mauris</td>
-                  </tr>
-                  <tr>
-                    <td>1,010</td>
-                    <td>massa</td>
-                    <td>Vestibulum</td>
-                    <td>lacinia</td>
-                    <td>arcu</td>
-                  </tr>
-                  <tr>
-                    <td>1,011</td>
-                    <td>eget</td>
-                    <td>nulla</td>
-                    <td>Class</td>
-                    <td>aptent</td>
-                  </tr>
-                  <tr>
-                    <td>1,012</td>
-                    <td>taciti</td>
-                    <td>sociosqu</td>
-                    <td>ad</td>
-                    <td>litora</td>
-                  </tr>
-                  <tr>
-                    <td>1,013</td>
-                    <td>torquent</td>
-                    <td>per</td>
-                    <td>conubia</td>
-                    <td>nostra</td>
-                  </tr>
-                  <tr>
-                    <td>1,014</td>
-                    <td>per</td>
-                    <td>inceptos</td>
-                    <td>himenaeos</td>
-                    <td>Curabitur</td>
-                  </tr>
-                  <tr>
-                    <td>1,015</td>
-                    <td>sodales</td>
-                    <td>ligula</td>
-                    <td>in</td>
-                    <td>libero</td>
-                  </tr>
-                </tbody>
-              </table>
+            <hr>
+            <div id="programmlistContent">
+            <?php
+              dispProgrammList();
+            ?>
             </div>
+           
           </div>
           <div id="ticket">
             <h2>Ticket</h2>
+            <a class="btn btn-default btn-sm" href="#"><i class="fa fa-cloud-download"></i></a>
           </div>
 
         </div>
@@ -287,6 +173,25 @@ $user = getAdminUserInfo('ychallet');
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+
+    <div class="modal fade" id="modalList">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="modalListTitle"></h4>
+          </div>
+          <div class="modal-body">
+            <p id="modalListContent"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
    <?php include('addProgramm.php'); ?>
 

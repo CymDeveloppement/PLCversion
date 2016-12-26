@@ -22,3 +22,10 @@
 .rowadd{
 	margin-top: 15px;
 }
+#ticket{
+	display: none;
+}
+.bar {
+    height: 18px;
+    background: green;
+}

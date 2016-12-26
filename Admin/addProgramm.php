@@ -96,12 +96,7 @@
                         
                     </div>
                         <div class="col-md-6">
-                            <span class="btn btn-success fileinput-button">
-                                <i class="glyphicon glyphicon-plus"></i>
-                                <span>Selectioner le fichier...</span>
-                                <!-- The file input field used as target for the file upload widget -->
-                                <input id="fileupload" type="file" name="files[]" multiple>
-                            </span>
+                            
                             <br>
                             <br>
                             <!-- The global progress bar -->
@@ -114,8 +109,15 @@
                     <div class="row rowadd">
                         <div class="col-md-2"></div>
                         <div class="col-md-6">
+                        <span class="btn btn-block btn-success fileinput-button">
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <span>Selectioner le fichier...</span>
+                                <!-- The file input field used as target for the file upload widget -->
+                                <input id="fileupload" type="file" name="files[]" multiple>
+                            </span>
+                            <br>
                             <div id="progress" class="progress">
-                                <div class="progress-bar progress-bar-success"></div>
+                                <div class="bar progress-bar progress-bar-success" style="width: 0%;"></div>
                             </div>
                         </div>
                         <div class="col-md-2"></div>
@@ -125,6 +127,7 @@
                 <div id="detailProgramm">
                     <h1>Détails</h1>
                     <h3 id="newfilename"></h3>
+                    <i id="currentFileName"></i>
                     <hr>
                     <div class="row">
                         <div class="col-md-1"></div>
@@ -147,7 +150,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-            <button type="button" class="btn btn-primary">Enregistrer</button>
+            <button type="button" class="btn btn-primary" onclick="saveVersion();">Enregistrer</button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->

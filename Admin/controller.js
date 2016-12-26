@@ -244,6 +244,81 @@ function getinfo(customer, folder, element)
 		  });
 }
 
+function dispProgramm()
+{
+	$('#ticket').fadeOut('slow');
+	$('#programm').fadeIn('slow');
+}
+
+function dispTicket()
+{
+	$('#ticket').fadeIn('slow');
+	$('#programm').fadeOut('slow');
+}
+
+function dispAllVersion(UID)
+{
+
+	$('#modalListContent').html('');
+	$.post( "ajax.admin.php", { GETALLVERSION: 1, UIDP: UID})
+		  .done(function( data ) {
+		  	$('#modalListContent').html(data);
+		  	$('#modalListTitle').html('Toute les versions');
+			$('#modalList').modal('show');
+
+	});
+}
+
+function dispAllBug(UID)
+{
+	$('#modalListContent').html('');
+	$.post( "ajax.admin.php", { GETBUGS: 1, UIDP: UID})
+		  .done(function( data ) {
+		  	$('#modalListContent').html(data);
+		  	$('#modalListTitle').html('Bugs : ');
+			$('#modalList').modal('show');
+
+	});
+	
+}
+
+function addbug(UID)
+{
+	if ($('#bugTextInput').val() == '') {
+		$('#groupAddBug').addClass('has-danger');
+	} else {
+		var bugText = $('#bugTextInput').val();
+		$.post( "ajax.admin.php", { ADDBUG: 1, UIDP: UID, BUG: bugText})
+			  .done(function( data ) {
+			  	$('#modalListContent').html(data);
+			  	$('#groupAddBug').removeClass('has-danger');
+			  	$('#groupAddBug').addClass('has-success');
+			  	refreshList();
+		});
+	}
+}
+
+function saveVersion()
+{
+	var UID = $('#selectCustomerAdd').val() + "/" + $('#selectfolderAdd').val() + "/" + $('#selectelemAdd').val() + "/" + $('#newfilename').html();
+	$.post( "ajax.admin.php", { SAVE: 1, INIT: initial, UIDV: UID, SOURCE: $('#currentFileName').html(), NEWNAME: $('#newfilename').html(), DESCRIPTION: $('#versiondesc').val()})
+			  .done(function( data ) {
+			  	$.post( "ajax.admin.php", { REFRESHPROGRAMMLIST: 1 })
+			  		.done(function( data ) {
+			  			$('#programmlistContent').html(data);
+			  			$('#modalnewprogramm').modal('hide');
+				});
+	});
+
+}
+
+function refreshList()
+{
+	$.post( "ajax.admin.php", { REFRESHPROGRAMMLIST: 1 })
+			  		.done(function( data ) {
+			  			$('#programmlistContent').html(data);
+	});
+}
 
 currentversion = [];
 currentStateV = '';
@@ -278,7 +353,9 @@ $(function () {
         done: function (e, data) {
 		console.log(data);
             $.each(data.result.files, function (index, file) {
-            	dispDetails(file.name)
+            	//alert(file.name);
+            	dispDetails(file.name);
+            	$('#currentFileName').html(file.name);
                 $('<p/>').text(file.name).appendTo('#files');
             });
         },
