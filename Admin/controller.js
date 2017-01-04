@@ -87,12 +87,14 @@ function selectCustomer(name, id)
 	$('#'+id).val(name);
 	$('#'+id+'Disp').html(name);
 	if (id == 'selectCustomerAdd') {refreshFolder();}
+	$('#selectfolderAddDisp').removeAttr('disabled');
 }
 
 function selectFolder(name)
 {
 	$('#selectfolderAdd').val(name);
 	$('#selectfolderAddDisp').html(name);
+	$('#selectelemAddDisp').removeAttr('disabled');
 }
 
 function selectElem(elem)
@@ -116,7 +118,7 @@ function getCurrentVersion(customer, name, elem)
 			  	currentversion[2] = currentversion[2].replace("B", "");
 			  	currentversion[2] = currentversion[2].replace("A", "");
 			  	currentversion[2] = (parseInt(currentversion[2],10)+1);
-			  	initial = false;			  	
+			  	initial = 0;			  	
 		  	} else {
 		  		$('#currentversion').html('Version Initiale');
 		  		var newData = '0.0.0A.NEW';
@@ -124,7 +126,7 @@ function getCurrentVersion(customer, name, elem)
 		  		currentversion[3] = currentversion[2].charAt(currentversion[2].length - 1);
 			  	currentversion[2] = currentversion[2].replace("A", "");
 			  	currentversion[2] = (parseInt(currentversion[2],10)+1);
-			  	initial = true;
+			  	initial = 1;
 		  	}
 		  	currentStateV = currentversion[3];
 		  	if (currentversion[3] == 'A') {
@@ -140,6 +142,7 @@ function getCurrentVersion(customer, name, elem)
 		  	
 		  	$('#contentProgramm').fadeIn('slow');
 	});
+	getPreviousBug(customer + "/" + name + "/TICKET/|" + elem);
 }
 
 function selectCorrect(){
@@ -227,7 +230,7 @@ function dispDetails(file)
 	var newfile = $('#selectfolderAdd').val()+'-V'+$('#V1').val()+'.'+$('#V2').val()+'.'+$('#V3').val()+currentStateV;
 	$('#newfilename').html(newfile);
 
-	if (!initial) {
+	if (initial == 0) {
 		projectInfo = getinfo($('#selectCustomerAdd').val(), $('#selectfolderAdd').val(), $('#selectelemAdd').val());
 	}
 
@@ -298,11 +301,28 @@ function addbug(UID)
 	}
 }
 
+function getPreviousBug(UID)
+{
+	$.post( "ajax.admin.php", { LISTPREBUG: UID})
+			  .done(function( data ) {
+			  	$('#bugcontentaddprogramm').html(data);
+			  	//alert(data);
+	});
+}
+
+function resolvbug(UID, id)
+{
+	$('#resolvbugbutton-'+id).fadeOut();
+	bugsresolving.push(UID);
+	//alert(UID);
+}
+
 function saveVersion()
 {
 	var UID = $('#selectCustomerAdd').val() + "/" + $('#selectfolderAdd').val() + "/" + $('#selectelemAdd').val() + "/" + $('#newfilename').html();
-	$.post( "ajax.admin.php", { SAVE: 1, INIT: initial, UIDV: UID, SOURCE: $('#currentFileName').html(), NEWNAME: $('#newfilename').html(), DESCRIPTION: $('#versiondesc').val()})
+	$.post( "ajax.admin.php", { SAVE: 1, INIT: initial, UIDV: UID, SOURCE: $('#currentFileName').html(), NEWNAME: $('#newfilename').html(),BUGS: bugsresolving,DESCRIPTION: $('#versiondesc').val()})
 			  .done(function( data ) {
+			  	//alert(data);
 			  	$.post( "ajax.admin.php", { REFRESHPROGRAMMLIST: 1 })
 			  		.done(function( data ) {
 			  			$('#programmlistContent').html(data);
@@ -322,7 +342,8 @@ function refreshList()
 
 currentversion = [];
 currentStateV = '';
-initial = false;
+initial = 0;
+bugsresolving = [];
 
 $('.modal').on('hidden.bs.modal', function (e) {
  	$('#foldername').val('');
@@ -333,10 +354,17 @@ $('.modal').on('hidden.bs.modal', function (e) {
  	$('#selectCustomerAddDisp').html('Choisissez un Client');
  	$('#selectfolderAddDisp').html('Choisissez un Dossier');
  	$('#selectelemAddDisp').html('Choisissez un Element');
+ 	$('#selectfolderAddDisp').attr('disabled', 'disabled');
+ 	$('#selectelemAddDisp').attr('disabled', 'disabled');
  	$('#selectCustomerAdd').val('');
  	$('#selectfolderAdd').val('');
  	$('#selectelemAdd').val('');
  	$('#files').html('');
+ 	$('#uploadfileprogress').css('width', '0%');
+ 	$('#versiondesc').val('');
+ 	bugsresolving = "CLEAR";
+ 	bugsresolving = [];
+ 	initial = 0;
 });
 
 $('.modal').on('show.bs.modal', function (e) {

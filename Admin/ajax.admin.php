@@ -35,7 +35,7 @@ if (isset($_POST['LISTCUSTOMER'])) {
 	$allCustomer = scandir('../DATA');
 	if (count($allCustomer)>0) {
 		foreach ($allCustomer as $key => $value) {
-			if ($value != '.' && $value != '..') {
+			if ($value != '.' && $value != '..' && $value != '.htaccess') {
 				echo '<a class="dropdown-item" href="#" onclick="selectCustomer(\''.$value.'\', \''.$_POST['LISTCUSTOMER'].'\');">'.$value.'</a>';
 			}
 		}
@@ -46,7 +46,7 @@ if (isset($_POST['LISTFOLDER'])) {
 	$allFolder = scandir('../DATA/'.$_POST['LISTFOLDER'].'/');
 	if (count($allFolder)>0) {
 		foreach ($allFolder as $key => $value) {
-			if ($value != '.' && $value != '..') {
+			if ($value != '.' && $value != '..' && $value != '.htaccess') {
 				echo '<a class="dropdown-item" href="#" onclick="selectFolder(\''.$value.'\');">'.$value.'</a>';
 			}
 		}
@@ -63,6 +63,10 @@ if (isset($_POST['GETINFO'])) {
 
 if (isset($_POST['GETBUGS'])) {
 	getAllBug($_POST['UIDP']);	
+}
+
+if (isset($_POST['LISTPREBUG'])) {
+	getAllPreviousBug($_POST['LISTPREBUG']);
 }
 
 if (isset($_POST['ADDBUG'])) {
@@ -117,8 +121,8 @@ if (isset($_POST['GETALLVERSION'])) {
 if (isset($_POST['SAVE'])) {
 	$data = explode("/", $_POST['UIDV']);
 
-	if (!$_POST['INIT']) {
-		$prev = $data[0].'/'.$data[1].'/'.$data[2].'/'.getLastVersion($data[1], $data[0], $data[2]);
+	if ($_POST['INIT'] == 0) {
+		$prev = $data[0].'/'.$data[1].'/'.$data[2].'/'.$data[1].'-V'.getLastVersion($data[1], $data[0], $data[2]);
 	} else {
 		$prev = "";
 	}
@@ -127,6 +131,7 @@ if (isset($_POST['SAVE'])) {
 	mkdir ($foldername);
 	$end = substr($_POST['SOURCE'], strrpos($_POST['SOURCE'] , "."));
 	copy('files/'.$_POST['SOURCE'], $foldername.'/'.$_POST['NEWNAME'].$end);
+	echo $prev;
 	generateChangelog($prev, $stable, $_POST['NEWNAME']);
 }
 

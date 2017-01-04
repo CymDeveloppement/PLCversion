@@ -1,0 +1,8 @@
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+</IfModule>
+AuthName "Connection"
+AuthType Basic
+AuthUserFile "/homez.541/rpios/plcversion.rpi-os.com/Download/user-data/.htpasswd"
+Require valid-user

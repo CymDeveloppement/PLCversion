@@ -100,3 +100,11 @@ body {
   display: inline-block;
   border-radius: 50%;
 }
+
+.terminalStyle{
+  background-color: black;
+  color: white;
+  padding: 20px;
+  border-radius: 7px;
+  margin: 10px;
+}

@@ -1,0 +1,4 @@
+AuthName "Connection Obligatoire"
+AuthType Basic
+AuthUserFile "/homez.541/rpios/plcversion.rpi-os.com/Admin/user-data/.htpasswd"
+Require valid-user

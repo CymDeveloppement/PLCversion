@@ -28,7 +28,7 @@
             		<div class="col-md-4">
             			<input type="hidden" name="folderSelectAdd" id="selectfolderAdd">
 		              	<div class="btn-group btn-block">
-		                	<button type="button" class="btn btn-block btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="selectfolderAddDisp">
+		                	<button type="button" class="btn btn-block btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="selectfolderAddDisp" disabled>
 		                  Choisissez un Dossier
 		                	</button>
 		                	<div class="dropdown-menu btn-block" id="folderlistAdd">
@@ -38,7 +38,7 @@
                     <div class="col-md-4">
                         <input type="hidden" name="elemSelectAdd" id="selectelemAdd">
                         <div class="btn-group btn-block">
-                            <button type="button" class="btn btn-block btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="selectelemAddDisp">
+                            <button type="button" class="btn btn-block btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="selectelemAddDisp" disabled>
                           Choisissez un Element
                             </button>
                             <div class="dropdown-menu btn-block" id="elemlistAdd">
@@ -105,22 +105,21 @@
                             <div id="files" class="files"></div>
                         </div>
                     </div>
-
                     <div class="row rowadd">
-                        <div class="col-md-2"></div>
+                        <div class="col-md-3"></div>
                         <div class="col-md-6">
                         <span class="btn btn-block btn-success fileinput-button">
                                 <i class="glyphicon glyphicon-plus"></i>
-                                <span>Selectioner le fichier...</span>
+                                <span>Sélectionner le fichier...</span>
                                 <!-- The file input field used as target for the file upload widget -->
                                 <input id="fileupload" type="file" name="files[]" multiple>
                             </span>
                             <br>
-                            <div id="progress" class="progress">
-                                <div class="bar progress-bar progress-bar-success" style="width: 0%;"></div>
+                            <div id="progress" class="progress" style="margin-top:20px;">
+                                <div class="bar progress-bar progress-bar-success" id="uploadfileprogress" style="width: 0%;"></div>
                             </div>
                         </div>
-                        <div class="col-md-2"></div>
+                        <div class="col-md-3"></div>
                     </div>
 
                 </div>
@@ -144,6 +143,9 @@
                     <hr>
                     <div id="buglist">
                         <h3>Bug : </h3>
+                        <div id="bugcontentaddprogramm">
+
+                        </div>
                     </div>
                 </div>
             </p>

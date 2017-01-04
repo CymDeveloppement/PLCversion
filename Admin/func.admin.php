@@ -20,7 +20,7 @@ function getAllCustomer()
 	$allCustomer = scandir('../DATA/');
 	$a = 0;
 	foreach ($allCustomer as $key => $value) {
-		if ($value != '.' && $value != '..') {
+		if ($value != '.' && $value != '..' && $value != '.htaccess') {
 			$returnCustomer[$a] = $value;
 			$a ++;
 		}
@@ -34,7 +34,7 @@ function getAllProgrammFromCustomer($customer)
 	$allProgramm = scandir('../DATA/'.$customer.'/');
 	$a = 0;
 	foreach ($allProgramm as $key => $value) {
-		if ($value != '.' && $value != '..') {
+		if ($value != '.' && $value != '..' && $value != '.htaccess') {
 			$returnProgrammList[$a] = $value;
 			$a ++;
 		}
@@ -287,6 +287,48 @@ function getAllBug($path)
 			</div>';
 }
 
+function getAllPreviousBug($path)
+{
+	$bugstr = '';
+	$part = explode("|", $path);
+	$allBugs = scandir('../DATA/'.$part[0]);
+	$allJsonDetBugs = [];
+	$a = 0;
+	foreach ($allBugs as $key => $value) {
+		if ($value != '.' && $value != '..' && $value != '.htaccess' && substr($value, 0, strlen($part[1])) == $part[1]) {
+			$allJsonDetBugs[$value] = json_decode(file_get_contents('../DATA/'.$part[0].$value), true);
+			foreach ($allJsonDetBugs[$value] as $bugNumber => $BugDet) {
+				if ($BugDet['state'] == 0) {
+					$a++;
+					$version = substr(explode($part[1], explode(".json", $value)[0])[1], 1);
+					$button = '<a href="#" onclick="resolvbug(\''.$part[0].$value.'|'.$bugNumber.'\', '.$a.');" class="btn btn-primary" id="resolvbugbutton-'.$a.'">Ce bug est résolu</a>';
+					$bugstr .= '<tr>
+                                  <th scope="row">'.$version.'</th>
+                                  <td>'.$BugDet['creator'].'</td>
+                                  <td>'.$BugDet['text'].'</td>
+                                  <td>'.$button.'</td>
+                                </tr>';
+				}
+			}
+		}
+	}
+	
+	echo '                            <table class="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Auteur</th>
+                                  <th>Bug</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                              '.$bugstr.'
+                              </tbody>
+                            </table>';
+	//var_dump($allJsonDetBugs);
+}
+
 function getInfo($UID)
 {
 	$data = explode("/", $UID);
@@ -361,15 +403,25 @@ function makeVersionTableList($programm)
 
 }
 
+function bugsSetResolv($UID)
+{
+	$part = explode("|", $UID);
+	$bugDet = json_decode(file_get_contents('../DATA/'.$part[0]), true);
+	$bugDet[$part[1]]['state'] = 1;
+	file_put_contents('../DATA/'.$part[0], json_encode($bugDet));
+	return "Résolution du bug : ".$bugDet[$part[1]]['text'];
+}
+
 function generateChangelog($prev, $stable, $new)
 {
 	global $user;
 	
-	if ($_POST['INIT']) {
+	if ($_POST['INIT'] == 1) {
 		$project['Creator'] = $user->SurName . ' ' . $user->Name;
 		$project['Contributor'] = $user->SurName . ' ' . $user->Name;
 		$project['Create'] = date('d/m/y');
 		$project['dateCurrent'] = date('d/m/y');
+		$project['Description'] = $_POST['DESCRIPTION'];
 		$fileplc = '../DATA/'.$_POST['UIDV'].'/.plcversion';
 		file_put_contents($fileplc, json_encode($project));
 	} else {
@@ -377,10 +429,12 @@ function generateChangelog($prev, $stable, $new)
 		$projectFile = file_get_contents($filePrev);
 		$project = json_decode($projectFile, true);
 		$project['dateCurrent'] = date('d/m/y');
-		$allContrib = explode(",", $project->Contributor);
+		$project['description'] = $_POST['DESCRIPTION'];
+		$allContrib = explode(",", $project['Contributor']);
 		$contribIgnore = 0;
 		foreach ($allContrib as $key => $value) {
-			if ($value == ($user->SurName . ' ' . $user->Name)) {
+			echo $value;
+			if ($value == (' '.$user->SurName . ' ' . $user->Name)) {
 				$contribIgnore = 1;
 			}
 		}
@@ -388,11 +442,20 @@ function generateChangelog($prev, $stable, $new)
 		if ($contribIgnore == 0) {
 			$project['Contributor'] = $project['Contributor'] . ', ' . $user->SurName . ' ' . $user->Name;
 		}
-
+		$fileplc = '../DATA/'.$_POST['UIDV'].'/.plcversion';
+		file_put_contents($fileplc, json_encode($project));
 	}
+
 	$currentV = explode('-V', $new);
 	echo $_POST['NEWNAME'];
-	//var_dump($currentV);
+	$bugsList = "";
+	if (is_array($_POST['BUGS']) && count($_POST['BUGS'])>0) {
+		foreach ($_POST['BUGS'] as $key => $value) {
+			$bugsList .= bugsSetResolv($value)."\n";
+		}
+	}
+	
+
 	$entete = "*   ".str_pad("Nom du projet : ".$currentV[0], 85, " ")."*\n";
 	$entete .= "*   ".str_pad("Createur : ".$project['Creator'], 85, " ")."*\n";
 	$entete .= "*   ".str_pad("Contributeur : ".$project['Contributor'], 85, " ")."*\n";
@@ -403,8 +466,12 @@ function generateChangelog($prev, $stable, $new)
 	$changelogFileGet = file_get_contents("changelog.template");
 	$changelogFileGet = str_replace("{PROJECTDATA}", $entete, $changelogFileGet);
 	$changelogFileGet = str_replace("{NEWFEATURELIST}", $_POST['DESCRIPTION'], $changelogFileGet);
+	$changelogFileGet = str_replace("{BUGLIST}", $bugsList, $changelogFileGet);
 
 	file_put_contents('../DATA/'.$_POST['UIDV'].'/changelog', $changelogFileGet);
+
+
+	
 }
 
 $user = getAdminUserInfo('ychallet');
